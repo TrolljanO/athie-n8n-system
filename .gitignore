@@ -28,3 +28,7 @@ n8n_data/
 # OS
 .DS_Store
 Thumbs.db
+
+# macOS
+.DS_Store
+._*
