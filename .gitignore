@@ -1,0 +1,30 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Credentials
+*.key
+*.pem
+*.p12
+credentials.json
+credentials/
+
+# N8N
+n8n/
+.n8n/
+
+# Docker volumes
+postgres_data/
+redis_data/
+n8n_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

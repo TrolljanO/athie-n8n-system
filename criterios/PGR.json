@@ -1,0 +1,49 @@
+{
+  "tipo_documento": "PGR",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "PGR-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 5,
+      "categoria": "Formato"
+    },
+    {
+      "id": "PGR-02",
+      "descricao": "Informações mínimas da empresa (Razão Social, CNPJ, Endereço, CNAE, Grau de Risco)",
+      "peso": 15,
+      "categoria": "Dados da Empresa"
+    },
+    {
+      "id": "PGR-03",
+      "descricao": "Identificação dos perigos e riscos ocupacionais",
+      "peso": 25,
+      "categoria": "Avaliação de Riscos"
+    },
+    {
+      "id": "PGR-04",
+      "descricao": "Medidas de prevenção implementadas ou a implementar",
+      "peso": 20,
+      "categoria": "Medidas Preventivas"
+    },
+    {
+      "id": "PGR-05",
+      "descricao": "Cronograma de implementação das medidas",
+      "peso": 15,
+      "categoria": "Planejamento"
+    },
+    {
+      "id": "PGR-06",
+      "descricao": "Data de elaboração e assinatura do responsável técnico",
+      "peso": 10,
+      "categoria": "Autoria"
+    },
+    {
+      "id": "PGR-07",
+      "descricao": "Registro profissional do responsável técnico (CREA, etc)",
+      "peso": 10,
+      "categoria": "Qualificação"
+    }
+  ]
+}
