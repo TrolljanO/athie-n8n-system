@@ -1,0 +1,47 @@
+{
+  "tipo_documento": "FICHA_REGISTRO",
+  "nome_completo": "Ficha de Registro",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "FR-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 10,
+      "categoria": "Formato"
+    },
+    {
+      "id": "FR-02",
+      "descricao": "Dados da empresa (razão social, CNPJ)",
+      "peso": 15,
+      "categoria": "Dados da Empresa"
+    },
+    {
+      "id": "FR-03",
+      "descricao": "Dados do trabalhador (nome, CPF, RG)",
+      "peso": 15,
+      "categoria": "Dados do Trabalhador"
+    },
+    {
+      "id": "FR-04",
+      "descricao": "Informações mínimas do contrato de trabalho: Data de admissão; Cargo (igual ao cargo inicial na CTPS); Remuneração; Expediente/jornada de trabalho (máximo 44h semanais)",
+      "peso": 25,
+      "categoria": "Dados do Contrato"
+    },
+    {
+      "id": "FR-05",
+      "descricao": "Página de atualizações informando quando houver mudança de cargo",
+      "peso": 15,
+      "categoria": "Atualizações"
+    },
+    {
+      "id": "FR-06",
+      "descricao": "Documento assinado pelo trabalhador",
+      "peso": 20,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

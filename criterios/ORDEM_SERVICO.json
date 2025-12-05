@@ -1,0 +1,60 @@
+{
+  "tipo_documento": "ORDEM_SERVICO",
+  "nome_completo": "Ordem de Serviço",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "OS-01",
+      "descricao": "Emitida pelo atual empregador, documento legível, sem rasuras em formato PDF",
+      "peso": 10,
+      "categoria": "Formato"
+    },
+    {
+      "id": "OS-02",
+      "descricao": "Razão social e CNPJ da empresa",
+      "peso": 10,
+      "categoria": "Dados da Empresa"
+    },
+    {
+      "id": "OS-03",
+      "descricao": "Dados do trabalhador: Nome completo e RG ou CPF; Cargo atual de acordo com Ficha de Registro/CTPS; Setor/GHE correspondente ao cargo",
+      "peso": 15,
+      "categoria": "Dados do Trabalhador"
+    },
+    {
+      "id": "OS-04",
+      "descricao": "Constar na Ordem de Serviço todos os riscos identificados para o cargo no PGR",
+      "peso": 15,
+      "categoria": "Riscos"
+    },
+    {
+      "id": "OS-05",
+      "descricao": "Medidas de prevenção adotadas para eliminar ou reduzir riscos: EPIs (uso obrigatório e eventual), EPCs e medidas administrativas identificados no PGR",
+      "peso": 15,
+      "categoria": "Medidas de Prevenção"
+    },
+    {
+      "id": "OS-06",
+      "descricao": "Conter processos adotados em caso de emergência",
+      "peso": 10,
+      "categoria": "Emergência"
+    },
+    {
+      "id": "OS-07",
+      "descricao": "Direito de recusa que permite ao trabalhador interromper uma tarefa quando apresentar riscos graves e iminentes",
+      "peso": 10,
+      "categoria": "Direito de Recusa"
+    },
+    {
+      "id": "OS-08",
+      "descricao": "Data e assinatura do trabalhador",
+      "peso": 15,
+      "categoria": "Assinatura",
+      "notas": [
+        "A data de validade da Ordem de Serviço terá como base a data de validade do PGR",
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

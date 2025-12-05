@@ -1,5 +1,6 @@
 {
   "tipo_documento": "PGR",
+  "nome_completo": "Programa de Gerenciamento de Riscos",
   "versao_criterios": "1.0",
   "pontuacao_total": 100,
   "criterios": [
@@ -11,39 +12,59 @@
     },
     {
       "id": "PGR-02",
-      "descricao": "Informações mínimas da empresa (Razão Social, CNPJ, Endereço, CNAE, Grau de Risco)",
+      "descricao": "Informações mínimas da empresa: Razão Social, CNPJ, Endereço, CNAE, Grau de Risco, Número de trabalhadores, Expediente/Jornada de Trabalho semanal",
       "peso": 15,
       "categoria": "Dados da Empresa"
     },
     {
       "id": "PGR-03",
-      "descricao": "Identificação dos perigos e riscos ocupacionais",
-      "peso": 25,
-      "categoria": "Avaliação de Riscos"
+      "descricao": "Possuir histórico das atualizações do PGR e a indicação do arquivamento mínimo de 20 (vinte) anos",
+      "peso": 10,
+      "categoria": "Histórico e Arquivamento"
     },
     {
       "id": "PGR-04",
-      "descricao": "Medidas de prevenção implementadas ou a implementar",
-      "peso": 20,
-      "categoria": "Medidas Preventivas"
+      "descricao": "Identificar todos os cargos da empresa, contendo a descrição das atividades de cada cargo e divididos por Setor e/ou GHE (grupo homogêneo de exposição)",
+      "peso": 15,
+      "categoria": "Cargos e Atividades"
     },
     {
       "id": "PGR-05",
-      "descricao": "Cronograma de implementação das medidas",
-      "peso": 15,
-      "categoria": "Planejamento"
+      "descricao": "Inventário de Riscos contemplando: caracterização dos processos e ambientes de trabalho; grupos de trabalhadores e atividades; descrição dos perigos com riscos, fontes geradoras e possíveis lesões; avaliação dos riscos com classificação e critérios; caracterização da exposição dos trabalhadores aos perigos (intensidade e duração); medidas de prevenção implementadas (EPI, EPC ou medidas administrativas)",
+      "peso": 20,
+      "categoria": "Inventário de Riscos",
+      "notas": [
+        "Informar a data da quantificação e apresentar certificado de calibração dos equipamentos válido na data da quantificação",
+        "Na ausência da quantificação, indicar no Plano de Ação a data prevista para realização"
+      ]
     },
     {
       "id": "PGR-06",
-      "descricao": "Data de elaboração e assinatura do responsável técnico",
+      "descricao": "Contemplar o Plano de Ação indicando as medidas de prevenção a serem introduzidas, aprimoradas ou mantidas. A data do Plano de Ações deve ser compatível com a data de vigência do PGR",
       "peso": 10,
-      "categoria": "Autoria"
+      "categoria": "Plano de Ação"
     },
     {
       "id": "PGR-07",
-      "descricao": "Registro profissional do responsável técnico (CREA, etc)",
+      "descricao": "Apresentar Plano de Atendimento a Emergências contendo quais ações tomar em situações de acidentes",
       "peso": 10,
-      "categoria": "Qualificação"
+      "categoria": "Emergência"
+    },
+    {
+      "id": "PGR-08",
+      "descricao": "Data e assinatura do representante da empresa e do profissional responsável pela elaboração do PGR",
+      "peso": 10,
+      "categoria": "Assinatura",
+      "notas": [
+        "Caso não haja quantificação dos riscos, será utilizada a data prevista no Plano de Ações como referência para a data de validade",
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    },
+    {
+      "id": "PGR-09",
+      "descricao": "PGR elaborado por profissionais legalmente habilitados em segurança do trabalho. Profissionais CREA ou CAU devem apresentar ART ou RRT definitiva anexa",
+      "peso": 5,
+      "categoria": "Responsável Técnico"
     }
   ]
 }

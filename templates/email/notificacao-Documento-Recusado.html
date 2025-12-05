@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Documento Recusado</title>
+</head>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
+        <h2 style="color: #721c24; margin: 0;">❌ Documento Recusado</h2>
+    </div>
+    
+    <p>Prezado(a) Fornecedor,</p>
+    
+    <p>O documento <strong>{{ $('Atualizar Tipo Documento - Falha').item.json.nome_arquivo }}</strong> foi analisado automaticamente e não atendeu aos critérios mínimos de validação.</p>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0;">
+        <p><strong>Tipo de Documento:</strong> {{ $('Atualizar Tipo Documento - Falha').item.json.tipo_documento }}</p>
+        <p><strong>Score Obtido:</strong> {{ $('Atualizar Tipo Documento - Falha').item.json.confidence_tipo }}/100</p>
+        <p><strong>Data de Análise:</strong> {{ $('Atualizar Tipo Documento - Falha').item.json.data_processamento.split('.')[0].replace('T', '\ às\ ') }}</p>
+    </div>
+    
+    <h3 style="color: #dc3545;">Critérios Não Atendidos:</h3>
+    <ul>
+        [[ #each criterios_nao_atendidos ]]
+        <li><strong>[[this.criterio_id]]:</strong> [[this.descricao]]<br>
+            <em style="color: #6c757d;">[[this.observaca]]</em>
+        </li>
+        [[/each]]
+    </ul>
+    
+    <h3>📋 Instruções para Correção:</h3>
+    <ol>
+        <li>Revise os critérios não atendidos acima</li>
+        <li>Corrija as informações faltantes ou incorretas</li>
+        <li>Reenvie o documento pelo mesmo canal</li>
+    </ol>
+    
+    <p style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; border-radius: 5px;">
+        <strong>⚠️ Atenção:</strong> Documentos com qualidade de imagem ruim ou ilegíveis não podem ser processados. 
+        Certifique-se de que o arquivo está nítido e completo.
+    </p>
+    
+    <hr style="margin: 30px 0; border: none; border-top: 1px solid #dee2e6;">
+    
+    <p style="font-size: 12px; color: #6c757d;">
+        Athié Wohnrath - Sistema Automatizado de Análise de Documentos<br>
+        Em caso de dúvidas, entre em contato com a equipe SST.
+    </p>
+</body>
+</html>

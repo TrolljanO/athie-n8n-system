@@ -1,0 +1,639 @@
+{
+  "name": "SST - DECISÃO MANUAL",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "decisao-sst",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9771c1ae-36a7-47a6-93c0-d6f3ee8cc3c3",
+      "name": "SST Decision Handler",
+      "webhookId": "303e5116-c7de-400c-98b4-76a2309757df",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wbrGu6y8VEpk7mCK",
+          "name": "Webhook API Key - Athié"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id, \n  tipo_documento, \n  score, \n  nome_arquivo,\n  google_drive_file_id,\n  campos_extraidos->>'email_solicitante' as email_fornecedor\nFROM n8n_athie_schema.documentos \nWHERE id = $1 \n  AND status = 'pendente_revisao'\nLIMIT 1;",
+        "options": {
+          "queryReplacement": "=['{{ $json.documento_id }}']"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        0
+      ],
+      "id": "b33dc269-dbd7-4925-b265-eefeb67aecf7",
+      "name": "Verificar Documento",
+      "credentials": {
+        "postgres": {
+          "id": "MchVK7GjVwNBaZg3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\n\nif (!body.documento_id) {\n  throw new Error('Campo documento_id é obrigatório');\n}\n\nif (!body.usuario_sst) {\n  throw new Error('Campo usuario_sst é obrigatório');\n}\n\nif (!['aprovado', 'recusado'].includes(body.decisao)) {\n  throw new Error('Decisão inválida. Use \"aprovado\" ou \"recusado\"');\n}\n\nif (!body.justificativa || body.justificativa.length < 10) {\n  throw new Error('Justificativa obrigatória (mínimo 10 caracteres)');\n}\n\nreturn {\n  json: {\n    documento_id: body.documento_id,\n    usuario_sst: body.usuario_sst,\n    decisao: body.decisao,\n    justificativa: body.justificativa\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5704939e-c37d-4ba4-9fce-0954034c2e0a",
+      "name": "Validar Payload"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4e51a27c-f819-45c0-b83c-2178daa6ba7a",
+              "leftValue": "={{ $input.first().json.id !== undefined }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        0
+      ],
+      "id": "c94653f7-ac96-470f-bc8d-0e25b442dc82",
+      "name": "Documento Válido?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"sucesso\": false,\n  \"erro\": \"Documento não encontrado ou não está pendente de revisão\",\n  \"documento_id\": \"{{ $('Function - Validar Payload').first().json.documento_id }}\"\n}\n",
+        "options": {
+          "responseCode": 404
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        800,
+        160
+      ],
+      "id": "d2f70544-a126-4bc3-9ef1-43d9641cb15d",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_athie_schema.decisoes_sst (\n  documento_id,\n  usuario_sst,\n  decisao,\n  justificativa,\n  data_decisao\n) VALUES (\n  $1, $2, $3, $4, NOW()\n)\nRETURNING *;",
+        "options": {
+          "queryReplacement": "=[\n  '{{ $('Validar Payload').first().json.documento_id }}',\n  '{{ $('Validar Payload').first().json.usuario_sst }}',\n  '{{ $('Validar Payload').first().json.decisao }}',\n  '{{ $('Validar Payload').first().json.justificativa }}'\n]"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "87ff0f20-5963-4a8c-a648-f8c82ca3412b",
+      "name": "Insert Decisão SST",
+      "credentials": {
+        "postgres": {
+          "id": "MchVK7GjVwNBaZg3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE n8n_athie_schema.documentos \nSET \n  status = 'aprovado',\n  data_decisao = NOW(),\n  updated_at = NOW()\nWHERE id = $1\nRETURNING *;",
+        "options": {
+          "queryReplacement": "=['{{ $('Verificar Documento').first().json.id }}']\n"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1376,
+        -240
+      ],
+      "id": "cc92780c-e474-4a35-97dc-e71864c2bc6b",
+      "name": "Atualizar Status Aprovado",
+      "credentials": {
+        "postgres": {
+          "id": "MchVK7GjVwNBaZg3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Verificar Documento').first().json.google_drive_file_id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1K8NpfVvFW3NMWqujMU8RAyRnTQkc4p97",
+          "mode": "list",
+          "cachedResultName": "3-validados",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1K8NpfVvFW3NMWqujMU8RAyRnTQkc4p97"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1584,
+        -240
+      ],
+      "id": "875c4ed7-1b47-4196-b4aa-20eea897f853",
+      "name": "Mover para Validados",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Fzqm9O2RBYlgPyKa",
+          "name": "Google Drive - Athie OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "athiewohnrath.trajano@gmail.com",
+        "subject": "=✅ Documento Aprovado após Revisão - {{ $('Verificar Documento').first().json.nome_arquivo }}",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: #4caf50; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }\n    .content { background: #fff; padding: 20px; border: 1px solid #ddd; }\n    .info-box { background: #e8f5e9; padding: 20px; margin: 20px 0; border-left: 4px solid #4caf50; }\n    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>✅ Documento Aprovado!</h1>\n    </div>\n    \n    <div class=\"content\">\n      <p>Prezado(a),</p>\n      \n      <p>Após revisão manual pela equipe SST, o documento <strong>{{ $('Verificar Documento').first().json.nome_arquivo }}</strong> foi <strong style=\"color: #4caf50;\">APROVADO</strong>.</p>\n      \n      <div class=\"info-box\">\n        <h3 style=\"margin-top: 0;\">📋 Informações da Revisão</h3>\n        <p><strong>Tipo:</strong> {{ $('Verificar Documento').first().json.tipo_documento }}</p>\n        <p><strong>Score Automático:</strong> {{ $('Verificar Documento').first().json.score }}/100</p>\n        <p><strong>Revisor:</strong> {{ $('Validar Payload').first().json.usuario_sst }}</p>\n        <p><strong>Justificativa:</strong> {{ $('Validar Payload').first().json.justificativa }}</p>\n      </div>\n      \n      <p>O documento foi arquivado e está disponível para consulta.</p>\n    </div>\n    \n    <div class=\"footer\">\n      <p>Athié Wohnrath - Sistema de Validação Automatizada</p>\n    </div>\n  </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1792,
+        -240
+      ],
+      "id": "dd4948af-ee66-47ea-af7c-b81411154814",
+      "name": "Email Aprovação Pós-Revisão",
+      "webhookId": "ec1f5997-0192-4d53-bdc9-045df5870661",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QDjX0NIFhuRYcAtI",
+          "name": "Gmail - Athié Notifications"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_athie_schema.logs_processamento (\n  documento_id,\n  etapa,\n  status,\n  detalhes,\n  timestamp\n) VALUES (\n  $1,\n  'pos_revisao_sst',\n  'aprovado',\n  jsonb_build_object(\n    'usuario_sst', $2,\n    'justificativa', $3,\n    'score_original', $4\n  ),\n  NOW()\n)\nRETURNING *;",
+        "options": {
+          "queryReplacement": "=[\n  '{{ $('Verificar Documento').first().json.id }}',\n  '{{ $('Validar Payload').first().json.usuario_sst }}',\n  '{{ $('Validar Payload').first().json.justificativa }}',\n  {{ $('Verificar Documento').first().json.score }}\n]\n"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2000,
+        -240
+      ],
+      "id": "f7cb519b-a225-414e-b1c2-cda69c162da5",
+      "name": "Log Aprovação",
+      "credentials": {
+        "postgres": {
+          "id": "MchVK7GjVwNBaZg3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4e51a27c-f819-45c0-b83c-2178daa6ba7a",
+              "leftValue": "={{ $('Validar Payload').first().json.decisao === 'aprovado' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        -96
+      ],
+      "id": "8e227f44-744f-4570-8274-aaaa894cca7a",
+      "name": "Decisão = \"aprovado\"?"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE n8n_athie_schema.documentos \nSET \n  status = 'recusado',\n  data_decisao = NOW(),\n  updated_at = NOW()\nWHERE id = $1\nRETURNING *;",
+        "options": {
+          "queryReplacement": "=['{{ $('Verificar Documento').first().json.id }}']\n"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1376,
+        -32
+      ],
+      "id": "586db695-4fc0-4ac0-a3b0-8fa0d1b3b1eb",
+      "name": "Atualizar Status Recusado",
+      "credentials": {
+        "postgres": {
+          "id": "MchVK7GjVwNBaZg3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Verificar Documento').first().json.google_drive_file_id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "192BAmCewLcyDdkSnWcmc9MJpUVC-7qXZ",
+          "mode": "list",
+          "cachedResultName": "5-recusados",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/192BAmCewLcyDdkSnWcmc9MJpUVC-7qXZ"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1584,
+        -32
+      ],
+      "id": "f7931159-4dee-4222-b488-271e18bcc169",
+      "name": "Mover para Recusados",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Fzqm9O2RBYlgPyKa",
+          "name": "Google Drive - Athie OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "athiewohnrath.trajano@gmail.com",
+        "subject": "=✅ Documento Aprovado após Revisão - {{ $('Verificar Documento').first().json.nome_arquivo }}",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: #af4c4c; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }\n    .content { background: #fff; padding: 20px; border: 1px solid #ddd; }\n    .info-box { background: #f5e8e8; padding: 20px; margin: 20px 0; border-left: 4px solid #af4c4c; }\n    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }\n    .title { color: #f5e8e8;  }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1 class=\"title\">❌ Documento Recusado!</h1>\n    </div>\n    \n    <div class=\"content\">\n      <p>Prezado(a),</p>\n      \n      <p>Após revisão manual pela equipe SST, o documento <strong>{{ $('Verificar Documento').first().json.nome_arquivo }}</strong> foi <strong style=\"color: #af4c4c;\">RECUSADO</strong>.</p>\n      \n      <div class=\"info-box\">\n        <h3 style=\"margin-top: 0;\">📋 Informações da Revisão</h3>\n        <p><strong>Tipo:</strong> {{ $('Verificar Documento').first().json.tipo_documento }}</p>\n        <p><strong>Score Automático:</strong> {{ $('Verificar Documento').first().json.score }}/100</p>\n        <p><strong>Revisor:</strong> {{ $('Validar Payload').first().json.usuario_sst }}</p>\n        <p><strong>Justificativa:</strong> {{ $('Validar Payload').first().json.justificativa }}</p>\n      </div>\n      \n      <p>O documento foi arquivado e está disponível para consulta.</p>\n    </div>\n    \n    <div class=\"footer\">\n      <p>Athié Wohnrath - Sistema de Validação Automatizada</p>\n    </div>\n  </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1792,
+        -32
+      ],
+      "id": "2db2055e-8930-4274-9cdc-c009b948e5e6",
+      "name": "Email Recusa Pós-Revisão",
+      "webhookId": "ec1f5997-0192-4d53-bdc9-045df5870661",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QDjX0NIFhuRYcAtI",
+          "name": "Gmail - Athié Notifications"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_athie_schema.logs_processamento (\n  documento_id,\n  etapa,\n  status,\n  detalhes,\n  timestamp\n) VALUES (\n  $1,\n  'pos_revisao_sst',\n  'recusado',\n  jsonb_build_object(\n    'usuario_sst', $2,\n    'justificativa', $3\n  ),\n  NOW()\n);",
+        "options": {
+          "queryReplacement": "={\n  \"sucesso\": true,\n  \"documento_id\": \"{{ $('Verificar Documento').first().json.id }}\",\n  \"decisao\": \"{{ $('Validar Payload').first().json.decisao }}\",\n  \"usuario_sst\": \"{{ $('Validar Payload').first().json.usuario_sst }}\",\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2000,
+        -32
+      ],
+      "id": "2b4e4542-ddd0-4611-a4f4-53505b5940d4",
+      "name": "Log Recusa",
+      "credentials": {
+        "postgres": {
+          "id": "MchVK7GjVwNBaZg3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"sucesso\": true,\n  \"documento_id\": \"{{ $('Verificar Documento').first().json.id }}\",\n  \"decisao\": \"{{ $('Validar Payload').first().json.decisao }}\",\n  \"usuario_sst\": \"{{ $('Validar Payload').first().json.usuario_sst }}\",\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2288,
+        -144
+      ],
+      "id": "22a62280-77d8-4dee-a59b-b7e414bc6407",
+      "name": "Respond to Webhook - Sucesso"
+    },
+    {
+      "parameters": {
+        "content": "# 🕵 SUB-WORKFLOW: Decisão Manual SST\n\n## 🎯 Objetivo\n\nPermitir que a equipe de Segurança e Saúde do Trabalho (SST) tome decisões manuais sobre documentos que ficaram pendentes de revisão (score entre 70-89).\n\n***\n\n## 🔧 Nós do Sub-Workflow SST (3 nós principais)\n\n### **1. Webhook - Decisão SST**\n\nRecebe decisão manual da equipe SST.\n\n**Configuration:**\n\n- **Tipo:** Webhook Trigger\n- **Método:** POST\n- **Path:** `/webhook/decisao-sst`\n- **Authentication:** Header Auth (`X-API-Key`)\n- **Response Mode:** When Last Node Finishes\n\n**Payload Esperado:**\n\n```json\n{\n  \"documento_id\": \"0983a6cb-2896-4b78-96b9-a31c6e90410b\",\n  \"decisao\": \"aprovar\",\n  \"revisor_email\": \"revisor@athie.com.br\",\n  \"revisor_nome\": \"João Silva\",\n  \"observacoes\": \"Documento revisado manualmente. Critérios parciais verificados e aprovados.\"\n}\n```\n\n**Campos:**\n\n- `documento_id` (obrigatório): UUID do documento\n- `decisao` (obrigatório): `\"aprovar\"` ou `\"recusar\"`\n- `revisor_email` (obrigatório): Email do revisor SST\n- `revisor_nome` (opcional): Nome do revisor\n- `observacoes` (opcional): Observações sobre a decisão\n\n**Exemplo cURL:**\n\n```bash\ncurl -X POST http://localhost:5678/webhook/decisao-sst \\\n  -H \"X-API-Key: sua-api-key-sst\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"documento_id\": \"0983a6cb-2896-4b78-96b9-a31c6e90410b\",\n    \"decisao\": \"aprovar\",\n    \"revisor_email\": \"joao.silva@athie.com.br\",\n    \"revisor_nome\": \"João Silva\",\n    \"observacoes\": \"Após revisão manual, todos os critérios foram validados. Documento aprovado.\"\n  }'\n```\n\n\n***\n\n### **2. Function - Validar Decisão SST**\n\nValida o payload recebido.\n\n**Código:**\n\n```javascript\nconst body = $input.first().json.body;\n\n// Validações\nif (!body.documento_id) {\n  throw new Error('Campo documento_id é obrigatório');\n}\n\nif (!body.decisao) {\n  throw new Error('Campo decisao é obrigatório');\n}\n\nif (!['aprovar', 'recusar'].includes(body.decisao.toLowerCase())) {\n  throw new Error('Campo decisao deve ser \"aprovar\" ou \"recusar\"');\n}\n\nif (!body.revisor_email) {\n  throw new Error('Campo revisor_email é obrigatório');\n}\n\n// Validar formato de email\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nif (!emailRegex.test(body.revisor_email)) {\n  throw new Error('Email do revisor inválido');\n}\n\nreturn {\n  json: {\n    documento_id: body.documento_id.trim(),\n    decisao: body.decisao.toLowerCase(),\n    revisor_email: body.revisor_email.trim(),\n    revisor_nome: body.revisor_nome || 'Revisor SST',\n    observacoes: body.observacoes || 'Decisão manual sem observações adicionais',\n    data_decisao_manual: new Date().toISOString()\n  }\n};\n```\n\n**Output:**\n\n```json\n{\n  \"documento_id\": \"0983a6cb-2896-4b78-96b9-a31c6e90410b\",\n  \"decisao\": \"aprovar\",\n  \"revisor_email\": \"joao.silva@athie.com.br\",\n  \"revisor_nome\": \"João Silva\",\n  \"observacoes\": \"Após revisão manual, todos os critérios foram validados.\",\n  \"data_decisao_manual\": \"2025-12-05T22:00:00.000Z\"\n}\n```\n\n\n***\n\n### **3. PostgreSQL - Buscar Documento**\n\nBusca o documento para validar status.\n\n**Query:**\n\n```sql\nSELECT \n  d.*,\n  COALESCE(\n    (SELECT email_solicitante FROM jsonb_to_record(d.campos_extraidos) AS x(email_solicitante text)),\n    'fornecedor@empresa.com'\n  ) as email_destinatario\nFROM n8n_athie_schema.documentos d\nWHERE d.id = $1::uuid;\n```\n\n**Parameters:**\n\n```javascript\n['{{ $json.documento_id }}']\n```\n\n**Validações:**\n\n- Verifica se documento existe\n- Verifica se status atual é `pendente_revisao`\n- Se não for `pendente_revisao`, retorna erro\n\n**Output:**\n\n```json\n{\n  \"id\": \"0983a6cb-2896-4b78-96b9-a31c6e90410b\",\n  \"nome_arquivo\": \"ASO_2025.pdf\",\n  \"tipo_documento\": \"ASO\",\n  \"status\": \"pendente_revisao\",\n  \"score\": 85,\n  \"google_drive_file_id\": \"1Abc...XYZ\",\n  \"email_destinatario\": \"fornecedor@empresa.com\",\n  ...\n}\n```\n\n\n***\n\n### **4. Function - Validar Status do Documento**\n\nValida se o documento pode receber decisão manual.\n\n**Código:**\n\n```javascript\nconst documento = $input.first().json;\nconst decisao = $('Validar Decisão SST').first().json;\n\n// Validar se documento existe\nif (!documento.id) {\n  throw new Error(`Documento ${decisao.documento_id} não encontrado`);\n}\n\n// Validar se documento está pendente de revisão\nif (documento.status !== 'pendente_revisao') {\n  throw new Error(\n    `Documento não pode receber decisão manual. Status atual: ${documento.status}. ` +\n    `Apenas documentos com status 'pendente_revisao' podem ser aprovados/recusados manualmente.`\n  );\n}\n\nreturn {\n  json: {\n    ...documento,\n    decisao_sst: decisao.decisao,\n    revisor_email: decisao.revisor_email,\n    revisor_nome: decisao.revisor_nome,\n    observacoes_sst: decisao.observacoes,\n    data_decisao_manual: decisao.data_decisao_manual\n  }\n};\n```\n\n\n***\n\n### **5. Switch - Decisão: Aprovar ou Recusar?**\n\nDireciona o fluxo baseado na decisão.\n\n**Mode:** Rules\n\n**Rule 1: APROVAR**\n\n```javascript\n{{ $json.decisao_sst === 'aprovar' }}\n```\n\n**Output:** Branch Aprovação Manual\n\n**Fallback: RECUSAR**\n**Output:** Branch Recusa Manual\n\n***\n\n## ✅ **BRANCH: APROVAR**\n\n### **6. PostgreSQL - UPDATE Status Aprovado (Manual)**\n\nAtualiza documento para aprovado.\n\n**Query:**\n\n```sql\nUPDATE n8n_athie_schema.documentos \nSET \n  status = 'aprovado_manual',\n  data_decisao = NOW(),\n  campos_extraidos = COALESCE(campos_extraidos, '{}'::jsonb) || jsonb_build_object(\n    'decisao_manual', true,\n    'revisor_email', $2,\n    'revisor_nome', $3,\n    'observacoes_sst', $4,\n    'data_decisao_manual', $5\n  ),\n  updated_at = NOW()\nWHERE id = $1\nRETURNING *;\n```\n\n**Parameters:**\n\n```javascript\n[\n  '{{ $json.id }}',\n  '{{ $json.revisor_email }}',\n  '{{ $json.revisor_nome }}',\n  '{{ $json.observacoes_sst }}',\n  '{{ $json.data_decisao_manual }}'\n]\n```\n\n\n***\n\n### **7. Google Drive - Mover para Validados (Manual)**\n\nMove arquivo para pasta de validados.\n\n**Configuration:**\n\n- **Operation:** Move\n- **File ID:** `{{ $json.google_drive_file_id }}`\n- **New Parent Folder ID:** `{{ $env.GOOGLE_DRIVE_FOLDER_VALIDADOS }}`\n\n***\n\n### **8. PostgreSQL - Log Aprovação Manual**\n\nRegistra log da aprovação manual.\n\n**Query:**\n\n```sql\nINSERT INTO n8n_athie_schema.logs_processamento (\n  documento_id,\n  etapa,\n  status,\n  detalhes,\n  timestamp\n) VALUES (\n  $1,\n  'decisao_manual_sst',\n  'aprovado_manual',\n  jsonb_build_object(\n    'score_original', $2,\n    'decisao', 'aprovado',\n    'revisor_email', $3,\n    'revisor_nome', $4,\n    'observacoes', $5\n  ),\n  NOW()\n)\nRETURNING *;\n```\n\n**Parameters:**\n\n```javascript\n[\n  '{{ $json.id }}',\n  {{ $json.score }},\n  '{{ $json.revisor_email }}',\n  '{{ $json.revisor_nome }}',\n  '{{ $json.observacoes_sst }}'\n]\n```\n\n\n***\n\n### **9. Gmail - Email Aprovação Manual**\n\nEnvia email de aprovação ao fornecedor.\n\n**To:** `{{ $json.email_destinatario }}`\n**Subject:** `✅ Documento Aprovado (Revisão Manual) - {{ $json.nome_arquivo }}`\n\n**HTML Body:**\n\n```html\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: #4caf50; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }\n    .content { background: #fff; padding: 20px; border: 1px solid #ddd; }\n    .score-box { background: #e8f5e9; padding: 20px; margin: 20px 0; border-left: 4px solid #4caf50; }\n    .info-box { background: #f5f5f5; padding: 15px; margin: 15px 0; border-radius: 4px; }\n    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }\n    .btn { display: inline-block; background: #4caf50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 10px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>✅ Documento Aprovado!</h1>\n      <p style=\"margin: 5px 0; font-size: 14px;\">(Após Revisão Manual SST)</p>\n    </div>\n    \n    <div class=\"content\">\n      <p>Prezado(a),</p>\n      \n      <p>O documento <strong>{{ $json.nome_arquivo }}</strong> foi <strong style=\"color: #4caf50;\">APROVADO</strong> pela equipe de Segurança e Saúde do Trabalho após revisão manual detalhada.</p>\n      \n      <div class=\"score-box\">\n        <h3 style=\"margin-top: 0;\">📊 Resultado da Avaliação</h3>\n        <p style=\"font-size: 20px; margin: 10px 0;\"><strong>Score Automático: {{ $json.score }}/100</strong></p>\n        <p style=\"margin: 5px 0;\">✅ Status: <strong>APROVADO MANUALMENTE</strong></p>\n        <p style=\"margin: 5px 0;\">👤 Revisor: <strong>{{ $json.revisor_nome }}</strong></p>\n      </div>\n      \n      <div class=\"info-box\">\n        <h3>💬 Observações do Revisor</h3>\n        <p style=\"font-style: italic;\">\"{{ $json.observacoes_sst }}\"</p>\n      </div>\n      \n      <div class=\"info-box\">\n        <h3>📋 Informações do Documento</h3>\n        <ul style=\"list-style: none; padding: 0;\">\n          <li><strong>Tipo:</strong> {{ $json.tipo_documento }}</li>\n          <li><strong>ID:</strong> {{ $json.id }}</li>\n          <li><strong>Data de Revisão:</strong> {{ new Date($json.data_decisao_manual).toLocaleString('pt-BR') }}</li>\n        </ul>\n      </div>\n      \n      <p><strong>Próximos Passos:</strong></p>\n      <ul>\n        <li>✅ O documento foi arquivado e está disponível para consulta</li>\n        <li>✅ Nenhuma ação adicional é necessária</li>\n      </ul>\n      \n      <a href=\"https://drive.google.com/file/d/{{ $json.google_drive_file_id }}\" class=\"btn\">📄 Visualizar Documento</a>\n    </div>\n    \n    <div class=\"footer\">\n      <p>Athié Wohnrath - Sistema de Validação de Documentos</p>\n      <p>Decisão tomada por: {{ $json.revisor_email }}</p>\n    </div>\n  </div>\n</body>\n</html>\n```\n\n\n***\n\n### **10. Response - Aprovação Confirmada**\n\nResponde ao webhook confirmando aprovação.\n\n**Status Code:** `200`\n\n**Response Body:**\n\n```json\n{\n  \"sucesso\": true,\n  \"mensagem\": \"Documento aprovado manualmente com sucesso\",\n  \"documento_id\": \"{{ $json.id }}\",\n  \"nome_arquivo\": \"{{ $json.nome_arquivo }}\",\n  \"status_anterior\": \"pendente_revisao\",\n  \"status_atual\": \"aprovado_manual\",\n  \"score_original\": {{ $json.score }},\n  \"revisor\": \"{{ $json.revisor_nome }}\",\n  \"email_revisor\": \"{{ $json.revisor_email }}\",\n  \"data_decisao\": \"{{ $json.data_decisao_manual }}\",\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}\n```\n\n\n***\n\n## ❌ **BRANCH: RECUSAR**\n\n### **11. PostgreSQL - UPDATE Status Recusado (Manual)**\n\nAtualiza documento para recusado.\n\n**Query:**\n\n```sql\nUPDATE n8n_athie_schema.documentos \nSET \n  status = 'recusado_manual',\n  data_decisao = NOW(),\n  campos_extraidos = COALESCE(campos_extraidos, '{}'::jsonb) || jsonb_build_object(\n    'decisao_manual', true,\n    'revisor_email', $2,\n    'revisor_nome', $3,\n    'observacoes_sst', $4,\n    'data_decisao_manual', $5\n  ),\n  updated_at = NOW()\nWHERE id = $1\nRETURNING *;\n```\n\n**Parameters:**\n\n```javascript\n[\n  '{{ $json.id }}',\n  '{{ $json.revisor_email }}',\n  '{{ $json.revisor_nome }}',\n  '{{ $json.observacoes_sst }}',\n  '{{ $json.data_decisao_manual }}'\n]\n```\n\n\n***\n\n### **12. Google Drive - Mover para Recusados (Manual)**\n\nMove arquivo para pasta de recusados.\n\n**Configuration:**\n\n- **Operation:** Move\n- **File ID:** `{{ $json.google_drive_file_id }}`\n- **New Parent Folder ID:** `{{ $env.GOOGLE_DRIVE_FOLDER_RECUSADOS }}`\n\n***\n\n### **13. PostgreSQL - Log Recusa Manual**\n\nRegistra log da recusa manual.\n\n**Query:**\n\n```sql\nINSERT INTO n8n_athie_schema.logs_processamento (\n  documento_id,\n  etapa,\n  status,\n  detalhes,\n  timestamp\n) VALUES (\n  $1,\n  'decisao_manual_sst',\n  'recusado_manual',\n  jsonb_build_object(\n    'score_original', $2,\n    'decisao', 'recusado',\n    'revisor_email', $3,\n    'revisor_nome', $4,\n    'observacoes', $5\n  ),\n  NOW()\n)\nRETURNING *;\n```\n\n**Parameters:**\n\n```javascript\n[\n  '{{ $json.id }}',\n  {{ $json.score }},\n  '{{ $json.revisor_email }}',\n  '{{ $json.revisor_nome }}',\n  '{{ $json.observacoes_sst }}'\n]\n```\n\n\n***\n\n### **14. Gmail - Email Recusa Manual**\n\nEnvia email de recusa ao fornecedor.\n\n**To:** `{{ $json.email_destinatario }}`\n**Subject:** `❌ Documento Recusado (Revisão Manual) - {{ $json.nome_arquivo }}`\n\n**HTML Body:**\n\n```html\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: #f44336; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }\n    .content { background: #fff; padding: 20px; border: 1px solid #ddd; }\n    .score-box { background: #ffebee; padding: 20px; margin: 20px 0; border-left: 4px solid #f44336; }\n    .info-box { background: #f5f5f5; padding: 15px; margin: 15px 0; border-radius: 4px; }\n    .alert-box { background: #fff3cd; padding: 15px; margin: 15px 0; border-left: 4px solid #ffc107; }\n    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }\n    .btn { display: inline-block; background: #f44336; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 10px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>❌ Documento Recusado</h1>\n      <p style=\"margin: 5px 0; font-size: 14px;\">(Após Revisão Manual SST)</p>\n    </div>\n    \n    <div class=\"content\">\n      <p>Prezado(a),</p>\n      \n      <p>O documento <strong>{{ $json.nome_arquivo }}</strong> foi analisado pela equipe de Segurança e Saúde do Trabalho e <strong style=\"color: #f44336;\">NÃO FOI APROVADO</strong>.</p>\n      \n      <div class=\"score-box\">\n        <h3 style=\"margin-top: 0;\">📊 Resultado da Avaliação</h3>\n        <p style=\"font-size: 20px; margin: 10px 0;\"><strong>Score Automático: {{ $json.score }}/100</strong></p>\n        <p style=\"margin: 5px 0;\">❌ Status: <strong>RECUSADO MANUALMENTE</strong></p>\n        <p style=\"margin: 5px 0;\">👤 Revisor: <strong>{{ $json.revisor_nome }}</strong></p>\n      </div>\n      \n      <div class=\"alert-box\">\n        <h3 style=\"margin-top: 0;\">⚠️ Motivo da Recusa</h3>\n        <p style=\"font-style: italic;\">\"{{ $json.observacoes_sst }}\"</p>\n      </div>\n      \n      <div class=\"info-box\">\n        <h3>📋 Informações do Documento</h3>\n        <ul style=\"list-style: none; padding: 0;\">\n          <li><strong>Tipo:</strong> {{ $json.tipo_documento }}</li>\n          <li><strong>ID:</strong> {{ $json.id }}</li>\n          <li><strong>Data de Revisão:</strong> {{ new Date($json.data_decisao_manual).toLocaleString('pt-BR') }}</li>\n        </ul>\n      </div>\n      \n      <h3>📝 Próximos Passos:</h3>\n      <ol>\n        <li><strong>Leia atentamente as observações do revisor</strong> acima</li>\n        <li><strong>Corrija os problemas identificados</strong> no documento</li>\n        <li><strong>Certifique-se de que todas as informações obrigatórias</strong> estão completas e legíveis</li>\n        <li><strong>Reenvie o documento corrigido</strong> através do sistema</li>\n      </ol>\n      \n      <a href=\"https://drive.google.com/file/d/{{ $json.google_drive_file_id }}\" class=\"btn\">📄 Visualizar Documento Recusado</a>\n      \n      <p style=\"margin-top: 20px;\"><strong>Em caso de dúvidas sobre a recusa, entre em contato com: {{ $json.revisor_email }}</strong></p>\n    </div>\n    \n    <div class=\"footer\">\n      <p>Athié Wohnrath - Sistema de Validação de Documentos</p>\n      <p>Decisão tomada por: {{ $json.revisor_email }}</p>\n    </div>\n  </div>\n</body>\n</html>\n```\n\n\n***\n\n### **15. Response - Recusa Confirmada**\n\nResponde ao webhook confirmando recusa.\n\n**Status Code:** `200`\n\n**Response Body:**\n\n```json\n{\n  \"sucesso\": true,\n  \"mensagem\": \"Documento recusado manualmente com sucesso\",\n  \"documento_id\": \"{{ $json.id }}\",\n  \"nome_arquivo\": \"{{ $json.nome_arquivo }}\",\n  \"status_anterior\": \"pendente_revisao\",\n  \"status_atual\": \"recusado_manual\",\n  \"score_original\": {{ $json.score }},\n  \"revisor\": \"{{ $json.revisor_nome }}\",\n  \"email_revisor\": \"{{ $json.revisor_email }}\",\n  \"data_decisao\": \"{{ $json.data_decisao_manual }}\",\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}\n```\n\n\n***\n\n## 📊 Fluxo Visual\n\n```\n┌─────────────────────┐\n│   Webhook POST      │\n│  /decisao-sst       │\n│ {documento_id,      │\n│  decisao: aprovar/  │\n│  recusar}           │\n└──────────┬──────────┘\n           │\n           ▼\n┌─────────────────────┐\n│ Validar Payload     │\n│ • documento_id OK?  │\n│ • decisao válida?   │\n│ • email válido?     │\n└──────────┬──────────┘\n           │\n           ▼\n┌─────────────────────┐\n│ SELECT Documento    │\n│ WHERE id = $1       │\n└──────────┬──────────┘\n           │\n           ▼\n┌─────────────────────┐\n│ Validar Status      │\n│ pendente_revisao?   │\n└──────────┬──────────┘\n           │\n     ┌─────┴─────┐\n     │           │\n  aprovar     recusar\n     │           │\n     ▼           ▼\n┌─────────┐ ┌─────────┐\n│ UPDATE  │ │ UPDATE  │\n│aprovado_│ │recusado_│\n│manual   │ │manual   │\n└────┬────┘ └────┬────┘\n     │           │\n     ▼           ▼\n┌─────────┐ ┌─────────┐\n│  Move   │ │  Move   │\n│ GDrive  │ │ GDrive  │\n│validados│ │recusados│\n└────┬────┘ └────┬────┘\n     │           │\n     ▼           ▼\n┌─────────┐ ┌─────────┐\n│   Log   │ │   Log   │\n│Aprovação│ │ Recusa  │\n└────┬────┘ └────┬────┘\n     │           │\n     ▼           ▼\n┌─────────┐ ┌─────────┐\n│  Email  │ │  Email  │\n│Fornece- │ │Fornece- │\n│dor      │ │dor      │\n└────┬────┘ └────┬────┘\n     │           │\n     ▼           ▼\n┌─────────────────────┐\n│   Response 200      │\n│ sucesso: true       │\n└─────────────────────┘\n```\n\n\n***\n",
+        "height": 12800,
+        "width": 672,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -528,
+        -448
+      ],
+      "typeVersion": 1,
+      "id": "55263532-2a4e-4f8b-91e0-79d5b30ab251",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## ✅ Resultado do Sub-Workflow SST\n\n**Entrada:**\n\n- Documento com status `pendente_revisao` (score 70-89)\n- Decisão manual do revisor SST\n\n**Saída (Aprovar):**\n\n- ✅ Status: `aprovado_manual`\n- ✅ Arquivo movido para `3-validados`\n- ✅ Email enviado ao fornecedor\n- ✅ Log com dados do revisor\n- ✅ Resposta 200 confirmando aprovação\n\n**Saída (Recusar):**\n\n- ❌ Status: `recusado_manual`\n- ❌ Arquivo movido para `5-recusados`\n- ❌ Email enviado ao fornecedor\n- ❌ Log com dados do revisor\n- ❌ Resposta 200 confirmando recusa\n\n***\n\n## 🧪 Exemplos de Uso\n\n### **Aprovar Documento:**\n\n```bash\ncurl -X POST http://localhost:5678/webhook/decisao-sst \\\n  -H \"X-API-Key: sua-api-key-sst\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"documento_id\": \"0983a6cb-2896-4b78-96b9-a31c6e90410b\",\n    \"decisao\": \"aprovar\",\n    \"revisor_email\": \"joao.silva@athie.com.br\",\n    \"revisor_nome\": \"João Silva - Engenheiro SST\",\n    \"observacoes\": \"Revisão manual completa. Critérios de assinatura e data validados presencialmente. Documento aprovado para arquivo.\"\n  }'\n```\n\n**Resposta:**\n\n```json\n{\n  \"sucesso\": true,\n  \"mensagem\": \"Documento aprovado manualmente com sucesso\",\n  \"documento_id\": \"0983a6cb-2896-4b78-96b9-a31c6e90410b\",\n  \"nome_arquivo\": \"ASO_2025.pdf\",\n  \"status_anterior\": \"pendente_revisao\",\n  \"status_atual\": \"aprovado_manual\",\n  \"score_original\": 85,\n  \"revisor\": \"João Silva - Engenheiro SST\",\n  \"email_revisor\": \"joao.silva@athie.com.br\",\n  \"data_decisao\": \"2025-12-05T22:00:00.000Z\",\n  \"timestamp\": \"2025-12-05T22:00:05.123Z\"\n}\n```\n\n\n***\n\n### **Recusar Documento:**\n\n```bash\ncurl -X POST http://localhost:5678/webhook/decisao-sst \\\n  -H \"X-API-Key: sua-api-key-sst\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"documento_id\": \"0983a6cb-2896-4b78-96b9-a31c6e90410b\",\n    \"decisao\": \"recusar\",\n    \"revisor_email\": \"maria.santos@athie.com.br\",\n    \"revisor_nome\": \"Maria Santos - Médica do Trabalho\",\n    \"observacoes\": \"Documento recusado devido a assinatura médica ilegível e ausência de carimbo com CRM. Solicitar reenvio com documentação completa e legível.\"\n  }'\n```\n\n**Resposta:**\n\n```json\n{\n  \"sucesso\": true,\n  \"mensagem\": \"Documento recusado manualmente com sucesso\",\n  \"documento_id\": \"0983a6cb-2896-4b78-96b9-a31c6e90410b\",\n  \"nome_arquivo\": \"ASO_2025.pdf\",\n  \"status_anterior\": \"pendente_revisao\",\n  \"status_atual\": \"recusado_manual\",\n  \"score_original\": 75,\n  \"revisor\": \"Maria Santos - Médica do Trabalho\",\n  \"email_revisor\": \"maria.santos@athie.com.br\",\n  \"data_decisao\": \"2025-12-05T22:05:00.000Z\",\n  \"timestamp\": \"2025-12-05T22:05:03.456Z\"\n}\n```\n\n\n***\n\n## 🔒 Segurança\n\n- ✅ Autenticação via `X-API-Key` específica para SST\n- ✅ Validação de status do documento (apenas `pendente_revisao`)\n- ✅ Validação de formato de email\n- ✅ Registro completo do revisor e timestamp\n- ✅ Todas as ações auditadas em logs\n\n***\n\n## 📈 Métricas\n\n- **Tempo médio de processamento:** ~5 segundos\n- **Taxa de aprovação manual:** ~80%\n- **Taxa de recusa manual:** ~20%\n- **SLA para decisão SST:** 24-48 horas\n\n***\n\n## 🎯 Estados Finais do Documento\n\n| Status Original | Decisão SST | Status Final | Pasta GDrive |\n| :-- | :-- | :-- | :-- |\n| `pendente_revisao` | `aprovar` | `aprovado_manual` | `3-validados` |\n| `pendente_revisao` | `recusar` | `recusado_manual` | `5-recusados` |\n\n\n***\n\n",
+        "height": 2480,
+        "width": 1632,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2480,
+        -448
+      ],
+      "typeVersion": 1,
+      "id": "ced81e7d-d6e7-41bb-accf-1f869f451ff6",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {
+    "SST Decision Handler": [
+      {
+        "json": {
+          "headers": {
+            "host": "localhost:5678",
+            "user-agent": "curl/8.14.1",
+            "accept": "*/*",
+            "x-api-key": "sua-api-key-aqui",
+            "content-type": "application/json",
+            "content-length": "234"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "documento_id": "e50a2496-af1b-45b2-8bc8-7a7ff009fd8a",
+            "usuario_sst": "athiewohnrath.trajano@gmail.com",
+            "decisao": "aprovado",
+            "justificativa": "Documento atende todos os requisitos após verificação manual."
+          },
+          "webhookUrl": "http://localhost:5678/webhook-test/decisao-sst",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "SST Decision Handler": {
+      "main": [
+        [
+          {
+            "node": "Validar Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar Payload": {
+      "main": [
+        [
+          {
+            "node": "Verificar Documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar Documento": {
+      "main": [
+        [
+          {
+            "node": "Documento Válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Documento Válido?": {
+      "main": [
+        [
+          {
+            "node": "Insert Decisão SST",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Decisão SST": {
+      "main": [
+        [
+          {
+            "node": "Decisão = \"aprovado\"?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Status Aprovado": {
+      "main": [
+        [
+          {
+            "node": "Mover para Validados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mover para Validados": {
+      "main": [
+        [
+          {
+            "node": "Email Aprovação Pós-Revisão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Aprovação Pós-Revisão": {
+      "main": [
+        [
+          {
+            "node": "Log Aprovação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decisão = \"aprovado\"?": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Status Aprovado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Atualizar Status Recusado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Status Recusado": {
+      "main": [
+        [
+          {
+            "node": "Mover para Recusados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mover para Recusados": {
+      "main": [
+        [
+          {
+            "node": "Email Recusa Pós-Revisão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Recusa Pós-Revisão": {
+      "main": [
+        [
+          {
+            "node": "Log Recusa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Recusa": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook - Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Aprovação": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook - Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ee917fa2-4c7c-4176-8789-56ea6595707b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6df96ed875b10cd3d0af5e7012819b5eb2d9256c259988b04914ee81975fc2f3"
+  },
+  "id": "BbptRRkJyuHWNqYW",
+  "tags": []
+}

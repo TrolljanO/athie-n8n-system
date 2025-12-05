@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #af4c4c; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 20px; border: 1px solid #ddd; }
+    .info-box { background: #f5e8e8; padding: 20px; margin: 20px 0; border-left: 4px solid #af4c4c; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    .title { color: #f5e8e8;  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">❌ Documento Recusado!</h1>
+    </div>
+    
+    <div class="content">
+      <p>Prezado(a),</p>
+      
+      <p>Após revisão manual pela equipe SST, o documento <strong>{{ $('Verificar Documento').first().json.nome_arquivo }}</strong> foi <strong style="color: #af4c4c;">RECUSADO</strong>.</p>
+      
+      <div class="info-box">
+        <h3 style="margin-top: 0;">📋 Informações da Revisão</h3>
+        <p><strong>Tipo:</strong> {{ $('Verificar Documento').first().json.tipo_documento }}</p>
+        <p><strong>Score Automático:</strong> {{ $('Verificar Documento').first().json.score }}/100</p>
+        <p><strong>Revisor:</strong> {{ $('Validar Payload').first().json.usuario_sst }}</p>
+        <p><strong>Justificativa:</strong> {{ $('Validar Payload').first().json.justificativa }}</p>
+      </div>
+      
+      <p>O documento foi arquivado e está disponível para consulta.</p>
+    </div>
+    
+    <div class="footer">
+      <p>Athié Wohnrath - Sistema de Validação Automatizada</p>
+    </div>
+  </div>
+</body>
+</html>

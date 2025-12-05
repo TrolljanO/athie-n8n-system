@@ -1,0 +1,74 @@
+{
+  "tipo_documento": "PCMSO",
+  "nome_completo": "Programa de Controle Médico de Saúde Ocupacional",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "PCMSO-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 5,
+      "categoria": "Formato"
+    },
+    {
+      "id": "PCMSO-02",
+      "descricao": "Informações mínimas da empresa: Razão social, CNPJ, Endereço, CNAE, Grau de risco, Número de trabalhadores",
+      "peso": 10,
+      "categoria": "Dados da Empresa"
+    },
+    {
+      "id": "PCMSO-03",
+      "descricao": "Indicação de arquivamento do prontuário médico do empregado por, no mínimo, 20 (vinte) anos após o desligamento",
+      "peso": 10,
+      "categoria": "Arquivamento"
+    },
+    {
+      "id": "PCMSO-04",
+      "descricao": "PCMSO deve contemplar todos os cargos da empresa, divididos por setor e/ou GHE, conforme no PGR",
+      "peso": 15,
+      "categoria": "Cargos"
+    },
+    {
+      "id": "PCMSO-05",
+      "descricao": "Os riscos relacionados para os cargos no PCMSO devem estar iguais aos identificados no PGR",
+      "peso": 10,
+      "categoria": "Riscos"
+    },
+    {
+      "id": "PCMSO-06",
+      "descricao": "Constar os exames médicos clínicos e complementares necessários, de acordo com exposições aos riscos ocupacionais identificados, atendendo às NRs, organizados por setor e/ou GHE",
+      "peso": 15,
+      "categoria": "Exames"
+    },
+    {
+      "id": "PCMSO-07",
+      "descricao": "Incluir a realização obrigatória dos exames médicos admissional, periódico, de retorno ao trabalho, mudança de riscos e demissional, com indicação de periodicidade conforme NRs",
+      "peso": 10,
+      "categoria": "Exames Obrigatórios"
+    },
+    {
+      "id": "PCMSO-08",
+      "descricao": "Constar o Relatório Analítico, elaborado pelo médico responsável anualmente, considerando a data do último relatório",
+      "peso": 10,
+      "categoria": "Relatório Analítico"
+    },
+    {
+      "id": "PCMSO-09",
+      "descricao": "Documento assinado pelo representante da empresa e pelo profissional responsável pela elaboração do PCMSO",
+      "peso": 5,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    },
+    {
+      "id": "PCMSO-10",
+      "descricao": "Possuir médico coordenador e ser elaborado por médico com registro no CFM em medicina do trabalho",
+      "peso": 10,
+      "categoria": "Responsável Técnico",
+      "notas": [
+        "Apresentar certificado do curso em medicina do trabalho caso não conste a especialização no CFM"
+      ]
+    }
+  ]
+}

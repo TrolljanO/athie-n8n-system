@@ -1,0 +1,51 @@
+{
+  "tipo_documento": "NR06",
+  "nome_completo": "NR 06 - Treinamento sobre uso dos Equipamentos de Proteção Individual (EPI)",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "NR06-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 10,
+      "categoria": "Formato"
+    },
+    {
+      "id": "NR06-02",
+      "descricao": "Dados da empresa e trabalhador (nome e CPF)",
+      "peso": 15,
+      "categoria": "Dados"
+    },
+    {
+      "id": "NR06-03",
+      "descricao": "Carga horária mínima de 1 hora e periodicidade máxima de 2 anos",
+      "peso": 15,
+      "categoria": "Carga Horária"
+    },
+    {
+      "id": "NR06-04",
+      "descricao": "Conteúdo programático conforme item 6.7.2 da NR 06: a) descrição do equipamento e seus componentes; b) risco ocupacional contra o qual o EPI oferece proteção; c) restrições e limitações de proteção; d) forma adequada de uso e ajuste; e) manutenção e substituição; f) cuidados de limpeza, higienização, guarda e conservação",
+      "peso": 25,
+      "categoria": "Conteúdo Programático"
+    },
+    {
+      "id": "NR06-05",
+      "descricao": "Data e local do treinamento",
+      "peso": 15,
+      "categoria": "Data e Local",
+      "notas": [
+        "Data de realização não pode ser inferior à data de admissão",
+        "Treinamento EAD deve estar acompanhado do projeto pedagógico, avaliação de aprendizagem e histórico de registro de acesso (logs)"
+      ]
+    },
+    {
+      "id": "NR06-06",
+      "descricao": "Documento assinado pelo trabalhador e instrutor(es) do treinamento",
+      "peso": 20,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}
