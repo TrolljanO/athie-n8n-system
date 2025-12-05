@@ -1,0 +1,51 @@
+{
+  "tipo_documento": "NR35",
+  "nome_completo": "NR 35 - Treinamento para Trabalho em Altura",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "NR35-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 10,
+      "categoria": "Formato"
+    },
+    {
+      "id": "NR35-02",
+      "descricao": "Dados do trabalhador (nome e CPF) e do instrutor (nome e qualificação em segurança no trabalho)",
+      "peso": 15,
+      "categoria": "Dados"
+    },
+    {
+      "id": "NR35-03",
+      "descricao": "Carga horária mínima de 8 horas e periodicidade máxima de 2 anos",
+      "peso": 15,
+      "categoria": "Carga Horária"
+    },
+    {
+      "id": "NR35-04",
+      "descricao": "Conteúdo programático conforme item 35.4.2.1 da NR 35: a) normas e regulamentos aplicáveis ao trabalho em altura; b) AR e condições impeditivas; c) riscos potenciais inerentes ao trabalho em altura e medidas de prevenção e controle; d) sistemas, equipamentos e procedimentos de proteção coletiva; e) EPI para trabalho em altura: seleção, inspeção, conservação e limitação de uso; f) acidentes típicos em trabalhos em altura; g) condutas em situações de emergência, incluindo noções básicas de técnicas de resgate e de primeiros socorros",
+      "peso": 30,
+      "categoria": "Conteúdo Programático"
+    },
+    {
+      "id": "NR35-05",
+      "descricao": "Data e local do treinamento",
+      "peso": 10,
+      "categoria": "Data e Local",
+      "notas": [
+        "Data de realização não pode ser inferior à data de admissão",
+        "O treinamento deve ser presencial"
+      ]
+    },
+    {
+      "id": "NR35-06",
+      "descricao": "Documento assinado pelo trabalhador e instrutor(es) do treinamento",
+      "peso": 20,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "tipo_documento": "ASO_DEMISSIONAL",
+  "nome_completo": "Atestado de Saúde Ocupacional - Demissional",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "ASOD-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 10,
+      "categoria": "Formato"
+    },
+    {
+      "id": "ASOD-02",
+      "descricao": "Dados da empresa (razão social, CNPJ)",
+      "peso": 10,
+      "categoria": "Dados da Empresa"
+    },
+    {
+      "id": "ASOD-03",
+      "descricao": "Dados do trabalhador: Nome completo e CPF; Cargo atual de acordo com Ficha de Registro/CTPS; Setor/GHE correspondente ao cargo",
+      "peso": 15,
+      "categoria": "Dados do Trabalhador"
+    },
+    {
+      "id": "ASOD-04",
+      "descricao": "Indicação e data de realização dos exames clínicos e complementares indicados para o demissional previsto no PCMSO",
+      "peso": 20,
+      "categoria": "Exames",
+      "notas": [
+        "Será aceito ASO Admissional ou Periódico realizado a menos de 135 dias (grau de risco 1 e 2) ou menos de 90 dias (grau de risco 3 e 4)"
+      ]
+    },
+    {
+      "id": "ASOD-05",
+      "descricao": "Indicação de aptidão física",
+      "peso": 15,
+      "categoria": "Aptidão"
+    },
+    {
+      "id": "ASOD-06",
+      "descricao": "Nome e CRM do médico examinador do ASO",
+      "peso": 15,
+      "categoria": "Médico Examinador"
+    },
+    {
+      "id": "ASOD-07",
+      "descricao": "Data e assinatura do trabalhador e médico examinador",
+      "peso": 15,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

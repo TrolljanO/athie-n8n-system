@@ -1,0 +1,78 @@
+{
+  "tipo_documento": "NR10",
+  "nome_completo": "NR 10 - Treinamento Básico de Segurança em Instalações e Serviços com Eletricidade",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "NR10-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 5,
+      "categoria": "Formato"
+    },
+    {
+      "id": "NR10-02",
+      "descricao": "Dados do trabalhador (nome e CPF)",
+      "peso": 10,
+      "categoria": "Dados do Trabalhador"
+    },
+    {
+      "id": "NR10-03",
+      "descricao": "Treinamento ofertado e/ou ministrado pela empresa atual do trabalhador",
+      "peso": 10,
+      "categoria": "Empresa"
+    },
+    {
+      "id": "NR10-04",
+      "descricao": "Curso básico inicial com carga horária mínima de 40 horas e periodicidade máxima de 2 anos",
+      "peso": 15,
+      "categoria": "Carga Horária",
+      "notas": [
+        "A carga horária deve ser distribuída em no máximo 8 horas por dia"
+      ]
+    },
+    {
+      "id": "NR10-05",
+      "descricao": "Conteúdo programático conforme Anexo III, item 1 da NR 10: 1. Introdução à segurança com eletricidade; 2. Riscos em instalações e serviços com eletricidade; 3. Técnicas de Análise de Risco; 4. Medidas de Controle do Risco Elétrico; 5. Normas Técnicas Brasileiras (NBR-5410, NBR 14039 e outras); 6. Regulamentações do MTE; 7. Equipamentos de proteção coletiva; 8. Equipamentos de proteção individual; 9. Rotinas de trabalho - Procedimentos; 10. Documentação de instalações elétricas; 11. Riscos adicionais; 12. Proteção e combate a incêndios; 13. Acidentes de origem elétrica; 14. Primeiros socorros; 15. Responsabilidades",
+      "peso": 20,
+      "categoria": "Conteúdo Programático"
+    },
+    {
+      "id": "NR10-06",
+      "descricao": "A carga horária e conteúdo programático dos treinamentos de reciclagem devem atender às necessidades da situação que o motivou",
+      "peso": 10,
+      "categoria": "Reciclagem",
+      "notas": [
+        "O treinamento de reciclagem deve ser apresentado com o curso básico inicial, salvo se possuir carga horária de 40 horas"
+      ]
+    },
+    {
+      "id": "NR10-07",
+      "descricao": "Data e local do treinamento",
+      "peso": 10,
+      "categoria": "Data e Local",
+      "notas": [
+        "Data de realização não pode ser inferior à data de admissão",
+        "O treinamento deve ser presencial"
+      ]
+    },
+    {
+      "id": "NR10-08",
+      "descricao": "Dados do(s) instrutor(es): nome, qualificação, número de registro profissional",
+      "peso": 10,
+      "categoria": "Instrutor",
+      "notas": [
+        "O treinamento deve ser ministrado por profissionais legalmente habilitados com curso específico na área elétrica e registro no conselho de classe"
+      ]
+    },
+    {
+      "id": "NR10-09",
+      "descricao": "Documento assinado pelo trabalhador e instrutor(es) do treinamento",
+      "peso": 10,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

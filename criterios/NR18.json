@@ -1,0 +1,57 @@
+{
+  "tipo_documento": "NR18",
+  "nome_completo": "NR 18 - Treinamento Básico em Segurança do Trabalho",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "NR18-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 10,
+      "categoria": "Formato"
+    },
+    {
+      "id": "NR18-02",
+      "descricao": "Dados da empresa e trabalhador (nome e CPF)",
+      "peso": 15,
+      "categoria": "Dados"
+    },
+    {
+      "id": "NR18-03",
+      "descricao": "Carga horária mínima de 4 horas e periodicidade máxima de 2 anos",
+      "peso": 15,
+      "categoria": "Carga Horária"
+    },
+    {
+      "id": "NR18-04",
+      "descricao": "Conteúdo programático conforme Anexo I, item 2.1, alínea 'a' da NR 18: I. as condições e meio ambiente de trabalho; II. os riscos inerentes às atividades desenvolvidas; III. os equipamentos de proteção coletiva existentes no canteiro de obras; IV. o uso adequado dos equipamentos de proteção individual; V. o PGR do canteiro de obras",
+      "peso": 25,
+      "categoria": "Conteúdo Programático"
+    },
+    {
+      "id": "NR18-05",
+      "descricao": "Data e local do treinamento",
+      "peso": 10,
+      "categoria": "Data e Local",
+      "notas": [
+        "Data de realização não pode ser inferior à data de admissão",
+        "O treinamento deve ser presencial"
+      ]
+    },
+    {
+      "id": "NR18-06",
+      "descricao": "Dados do instrutor (nome e qualificação em segurança do trabalho)",
+      "peso": 10,
+      "categoria": "Instrutor"
+    },
+    {
+      "id": "NR18-07",
+      "descricao": "Documento assinado pelo trabalhador e instrutor(es) do treinamento",
+      "peso": 15,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

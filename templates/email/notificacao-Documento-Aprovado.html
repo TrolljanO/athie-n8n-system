@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #4caf50; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 20px; border: 1px solid #ddd; }
+    .score-box { background: #e8f5e9; padding: 20px; margin: 20px 0; border-left: 4px solid #4caf50; }
+    .info-box { background: #f5f5f5; padding: 15px; margin: 15px 0; border-radius: 4px; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    .btn { display: inline-block; background: #4caf50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>✅ Documento Aprovado!</h1>
+    </div>
+    
+    <div class="content">
+      <p>Prezado(a),</p>
+      
+      <p>O documento <strong>{{ $input.first().json.nome_arquivo }}</strong> foi analisado e <strong style="color: #4caf50;">APROVADO</strong> pelo sistema automatizado.</p>
+      
+      <div class="score-box">
+        <h3 style="margin-top: 0;">📊 Resultado da Avaliação</h3>
+        <p style="font-size: 24px; margin: 10px 0;"><strong>Score: {{ $input.first().json.score }}/100</strong></p>
+        <p style="margin: 5px 0;">✅ Critérios Atendidos: {{ $input.first().json.campos_extraidos.criterios_atendidos }}</p>
+        <p style="margin: 5px 0;">⚠️ Critérios Parciais: {{ $input.first().json.campos_extraidos.criterios_parciais }}</p>
+        <p style="margin: 5px 0;">❌ Critérios Não Atendidos: {{ $input.first().json.campos_extraidos.criterios_nao_atendidos }}</p>
+      </div>
+      
+      <div class="info-box">
+        <h3>📋 Informações do Documento</h3>
+        <ul>
+          <li><strong>Tipo:</strong> {{ $input.first().json.tipo_documento }}</li>
+          <li><strong>Data de Recebimento:</strong> {{ new Date($input.first().json.data_recebimento).toLocaleString('pt-BR') }}</li>
+          <li><strong>Data de Processamento:</strong> {{ new Date($input.first().json.data_processamento).toLocaleString('pt-BR') }}</li>
+          <li><strong>ID do Documento:</strong> {{ $input.first().json.id }}</li>
+        </ul>
+      </div>
+      
+      <p><strong>Próximos Passos:</strong></p>
+      <ul>
+        <li>O documento foi arquivado e está disponível para consulta</li>
+        <li>Nenhuma ação adicional é necessária</li>
+      </ul>
+      
+      <a href="https://drive.google.com/file/d/{{ $input.first().json.google_drive_file_id }}" class="btn">📄 Visualizar Documento</a>
+    </div>
+    
+    <div class="footer">
+      <p>Athié Wohnrath - Sistema de Validação Automatizada de Documentos</p>
+      <p>Este é um email automático, não responda.</p>
+    </div>
+  </div>
+</body>
+</html>

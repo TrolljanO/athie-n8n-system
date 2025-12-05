@@ -1,0 +1,71 @@
+{
+  "tipo_documento": "ASO",
+  "nome_completo": "Atestado de Saúde Ocupacional",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "ASO-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 5,
+      "categoria": "Formato"
+    },
+    {
+      "id": "ASO-02",
+      "descricao": "Dados da empresa (razão social, CNPJ)",
+      "peso": 10,
+      "categoria": "Dados da Empresa"
+    },
+    {
+      "id": "ASO-03",
+      "descricao": "Dados do trabalhador: Nome completo e CPF; Cargo atual de acordo com Ficha de Registro/CTPS; Setor/GHE correspondente ao cargo",
+      "peso": 15,
+      "categoria": "Dados do Trabalhador"
+    },
+    {
+      "id": "ASO-04",
+      "descricao": "Constar no ASO todos os riscos identificados para o cargo no PGR e PCMSO",
+      "peso": 15,
+      "categoria": "Riscos"
+    },
+    {
+      "id": "ASO-05",
+      "descricao": "Indicação e data de realização dos exames clínicos e complementares previsto no PCMSO",
+      "peso": 15,
+      "categoria": "Exames",
+      "notas": [
+        "A avaliação clínica deve ser atualizada quando houver realização de novos exames e/ou procedimentos médicos"
+      ]
+    },
+    {
+      "id": "ASO-06",
+      "descricao": "Indicação de apto ou inapto para o trabalho e atividades específicas (trabalho em altura e espaço confinado)",
+      "peso": 15,
+      "categoria": "Aptidão",
+      "notas": [
+        "Em caso de inaptidão para Trabalho em Altura, informar na Ordem de Serviço e remover/indicar devolução do EPI Cinto de Segurança na Ficha de EPIs"
+      ]
+    },
+    {
+      "id": "ASO-07",
+      "descricao": "Nome e CRM do Médico Responsável pelo PCMSO",
+      "peso": 5,
+      "categoria": "Médico PCMSO"
+    },
+    {
+      "id": "ASO-08",
+      "descricao": "Nome e CRM do médico examinador do ASO",
+      "peso": 10,
+      "categoria": "Médico Examinador"
+    },
+    {
+      "id": "ASO-09",
+      "descricao": "Data e assinatura do trabalhador e médico examinador",
+      "peso": 10,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

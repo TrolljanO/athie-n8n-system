@@ -1,0 +1,57 @@
+{
+  "tipo_documento": "NR12",
+  "nome_completo": "NR 12 - Treinamento sobre utilização de Máquinas e Ferramentas Rotativas",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "NR12-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 10,
+      "categoria": "Formato"
+    },
+    {
+      "id": "NR12-02",
+      "descricao": "Dados da empresa e trabalhador (nome e CPF)",
+      "peso": 15,
+      "categoria": "Dados"
+    },
+    {
+      "id": "NR12-03",
+      "descricao": "Carga horária mínima de 4 horas e periodicidade máxima de 2 anos",
+      "peso": 15,
+      "categoria": "Carga Horária"
+    },
+    {
+      "id": "NR12-04",
+      "descricao": "Indicação das máquinas/equipamentos utilizados pelo trabalhador",
+      "peso": 10,
+      "categoria": "Máquinas/Equipamentos"
+    },
+    {
+      "id": "NR12-05",
+      "descricao": "Conteúdo programático conforme Anexo II, item 1, da NR 12: a) descrição e identificação dos riscos associados com cada máquina e equipamento e as proteções específicas contra cada um deles; b) funcionamento das proteções; como e por que devem ser usadas; c) como e em que circunstâncias uma proteção pode ser removida, e por quem; d) o que fazer se uma proteção foi danificada ou perdeu sua função; e) os princípios de segurança na utilização da máquina ou equipamento; f) segurança para riscos mecânicos, elétricos e outros relevantes; g) método de trabalho seguro; h) permissão de trabalho; i) sistema de bloqueio de funcionamento da máquina e equipamento durante operações de inspeção, limpeza, lubrificação e manutenção",
+      "peso": 25,
+      "categoria": "Conteúdo Programático"
+    },
+    {
+      "id": "NR12-06",
+      "descricao": "Data e local do treinamento",
+      "peso": 10,
+      "categoria": "Data e Local",
+      "notas": [
+        "Data de realização não pode ser inferior à data de admissão",
+        "O treinamento deve ser presencial"
+      ]
+    },
+    {
+      "id": "NR12-07",
+      "descricao": "Documento assinado pelo trabalhador e instrutor(es) do treinamento",
+      "peso": 15,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

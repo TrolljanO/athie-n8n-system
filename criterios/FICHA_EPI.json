@@ -1,0 +1,54 @@
+{
+  "tipo_documento": "FICHA_EPI",
+  "nome_completo": "Ficha de EPI",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "FEPI-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 10,
+      "categoria": "Formato"
+    },
+    {
+      "id": "FEPI-02",
+      "descricao": "Dados do trabalhador: Nome completo; Cargo atual de acordo com Ficha de Registro/CTPS; Setor/GHE correspondente ao cargo",
+      "peso": 15,
+      "categoria": "Dados do Trabalhador"
+    },
+    {
+      "id": "FEPI-03",
+      "descricao": "Constar a entrega de todos os EPIs identificados para o cargo no PGR e Ordem de Serviço",
+      "peso": 20,
+      "categoria": "EPIs",
+      "notas": [
+        "Verificar se existe protetor solar na Ficha de EPIs considerando especificação do PGR"
+      ]
+    },
+    {
+      "id": "FEPI-04",
+      "descricao": "Ficha de EPIs com atualização de, no máximo, 3 meses",
+      "peso": 20,
+      "categoria": "Atualização",
+      "notas": [
+        "A atualização deve considerar os EPIs mais utilizados em obra e a saturação do EPI",
+        "A data de referência deve ser inserida de acordo com a data de entrega mais recente"
+      ]
+    },
+    {
+      "id": "FEPI-05",
+      "descricao": "Constar o número do CA de cada EPI entregue, dentro da validade",
+      "peso": 20,
+      "categoria": "Certificado de Aprovação"
+    },
+    {
+      "id": "FEPI-06",
+      "descricao": "Todos os campos devidamente preenchidos e assinados pelo trabalhador",
+      "peso": 15,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #ff9800; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 20px; border: 1px solid #ddd; }
+    .score-box { background: #fff3e0; padding: 20px; margin: 20px 0; border-left: 4px solid #ff9800; }
+    .criterios-box { background: #f5f5f5; padding: 15px; margin: 15px 0; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    .btn { display: inline-block; background: #ff9800; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 10px 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚠️ Documento Requer Revisão Manual</h1>
+    </div>
+    
+    <div class="content">
+      <p>Olá, equipe de compliance!</p>
+      
+      <p>O documento <strong>{{ $('UPDATE Status Pendente Revisão').item.json.nome_arquivo }}</strong>) foi analisado pelo sistema automatizado e requer <strong style="color: #ff9800;">REVISÃO MANUAL</strong>.</p>
+      
+      <div class="score-box">
+        <h3 style="margin-top: 0;">📊 Resultado da Avaliação Automática</h3>
+        <p style="font-size: 24px; margin: 10px 0;"><strong>Score: {{ $input.first().json.detalhes.score }}/100</strong></p>
+        <p style="margin: 5px 0;">✅ Critérios Atendidos: {{ $input.first().json.detalhes.criterios_atendidos }}</p>
+        <p style="margin: 5px 0;">⚠️ Critérios Parciais: {{ $input.first().json.detalhes.criterios_parciais }}</p>
+        <p style="margin: 5px 0;">❌ Critérios Não Atendidos: {{ $input.first().json.detalhes.criterios_nao_atendidos }}</p>
+      </div>
+      
+      <div class="criterios-box">
+        <h3>🔍 Ação Necessária</h3>
+        <p>Por favor, revise manualmente os seguintes aspectos:</p>
+        <ul>
+          <li>Verifique os critérios marcados como PARCIAL</li>
+          <li>Confirme a legibilidade das informações</li>
+          <li>Valide dados que o sistema não pôde confirmar com certeza</li>
+        </ul>
+      </div>
+      
+      <p><strong>ID do Documento:</strong> {{ $input.first().json.id }}</p>
+      
+      <a href="https://drive.google.com/file/d/{{ $('UPDATE Status Pendente Revisão').item.json.google_drive_file_id }}" class="btn">📄 Visualizar Documento</a>
+      <a href="https://seu-dashboard.com/revisar/{{ $input.first().json.id }}" disable class="btn">✅ Iniciar Revisão</a>
+    </div>
+    
+    <div class="footer">
+      <p>Athié Wohnrath - Sistema de Validação Automatizada de Documentos</p>
+      <p>Este é um email automático, não responda.</p>
+    </div>
+  </div>
+</body>
+</html>

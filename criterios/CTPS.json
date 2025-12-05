@@ -1,0 +1,43 @@
+{
+  "tipo_documento": "CTPS",
+  "nome_completo": "Carteira de Trabalho e Previdência Social",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "CTPS-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 15,
+      "categoria": "Formato"
+    },
+    {
+      "id": "CTPS-02",
+      "descricao": "CTPS Física: Página da foto com número, série e assinatura; Página da qualificação civil com nome, documento, assinatura e carimbo do órgão; Página do contrato de trabalho com razão social, CNPJ, cargo, CBO, data de admissão, carimbo e assinatura",
+      "peso": 30,
+      "categoria": "CTPS Física",
+      "notas": [
+        "Quando aplicável, apresentar páginas de anotações gerais com alterações de cargo, salário, retificações"
+      ]
+    },
+    {
+      "id": "CTPS-03",
+      "descricao": "CTPS Digital: Dados do trabalhador (nome, CPF, data de nascimento); Informações do contrato (razão social, CNPJ, data de admissão, cargo, CBO, tipo de contrato, salário)",
+      "peso": 30,
+      "categoria": "CTPS Digital",
+      "notas": [
+        "Não é aceito print da tela como documento",
+        "Quando aplicável, apresentar anotações gerais com alterações"
+      ]
+    },
+    {
+      "id": "CTPS-04",
+      "descricao": "E-Social: Dados do trabalhador (nome, CPF); Informações do vínculo (tipo de registro, categoria); Informações do contrato (razão social, CNPJ, data de admissão, cargo, CBO, tipo de contrato, salário)",
+      "peso": 25,
+      "categoria": "E-Social",
+      "notas": [
+        "Se contrato determinado com data vencida, solicitar E-Social com data válida",
+        "Trabalhadores com atividades incompatíveis com marcação de ponto devem constar art. 62 da CLT"
+      ]
+    }
+  ]
+}

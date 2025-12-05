@@ -1,0 +1,35 @@
+{
+  "tipo_documento": "CONTRATO_TRABALHO",
+  "nome_completo": "Contrato de Trabalho",
+  "versao_criterios": "1.0",
+  "pontuacao_total": 100,
+  "criterios": [
+    {
+      "id": "CT-01",
+      "descricao": "Documento legível, sem rasuras em formato PDF",
+      "peso": 20,
+      "categoria": "Formato"
+    },
+    {
+      "id": "CT-02",
+      "descricao": "Dados da empresa (razão social, CNPJ) e trabalhador (nome e CPF)",
+      "peso": 25,
+      "categoria": "Dados"
+    },
+    {
+      "id": "CT-03",
+      "descricao": "Dados do contrato (data de admissão, cargo, salário, tipo de contrato e expediente/jornada de trabalho)",
+      "peso": 30,
+      "categoria": "Dados do Contrato"
+    },
+    {
+      "id": "CT-04",
+      "descricao": "Documento assinado pela empresa e trabalhador",
+      "peso": 25,
+      "categoria": "Assinatura",
+      "notas": [
+        "Assinaturas digitais/eletrônicas aceitas somente com certificação digital padrão ICP Brasil"
+      ]
+    }
+  ]
+}
